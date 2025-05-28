@@ -26,3 +26,29 @@ async function getVotes(counterId, addVote = false) {
   const data = await response.json();
   return data.value;
 }
+
+const votePanels = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  options.forEach(option => {
+    const panel = document.querySelector(`#${option.id}`);
+    const voteText = panel.querySelector('.votes-text');
+    const voteBtn = panel.querySelector('button');
+
+    votePanels[option.id] = { voteText, voteBtn };
+
+    // Afișează votul inițial
+    getVotes(option.counterId).then(value => {
+      voteText.textContent = `Votes: ${value}`;
+    });
+
+    // Votează
+    voteBtn.addEventListener('click', async () => {
+      voteBtn.disabled = true;
+      const value = await getVotes(option.counterId, true);
+      voteText.textContent = `Votes: ${value}`;
+      voteBtn.disabled = false;
+    });
+  });
+});
+
